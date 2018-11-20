@@ -10,7 +10,11 @@ public class FracCalc {
     	Scanner scanner = new Scanner(System.in);
     	System.out.print("Input: ");
     	String userInput = scanner.nextLine();
-    	System.out.println(produceAnswer(userInput));
+    	while (!userInput.equals("quit")) {
+        	System.out.println(produceAnswer(userInput));
+        	System.out.print("Input: ");
+        	userInput = scanner.nextLine();
+    	}
     	scanner.close();
     }
     
@@ -24,10 +28,35 @@ public class FracCalc {
     //      e.g. return ==> "1_1/4"
     public static String produceAnswer(String input) { 
         // TODO: Implement this function to produce the solution to the input
-        String[] result = input.split(" ");
-        return result[2];
+        String[] array = input.split(" ");
+        parse3(array[0]);
+        return parse3(array[2]);
     }
 
     // TODO: Fill in the space below with any helper methods that you think you will need
-    
+    public static String parse3 (String operand) {
+    	String whole;
+    	String numerator;
+    	String denominator;
+    	if (operand.contains("_")) {
+    		// if operand is a mixed fraction
+    		String[] parsedOnce = operand.split("_");
+    		String[] parsedTwice = parsedOnce[1].split("/");
+    		whole = parsedOnce[0];
+    		numerator = parsedTwice[0];
+    		denominator = parsedTwice[1];
+    	} else if (operand.contains("/")) {
+    		// if operand is an improper fraction
+    		String[] parsedOperand = operand.split("/");
+    		whole = "0";
+    		numerator = parsedOperand[0];
+    		denominator = parsedOperand[1];
+    	} else {
+    		// if operand is an integer
+    		whole = operand;
+    		numerator = "0";
+    		denominator = "1";
+    	}
+    	return "whole:" + whole + " numerator:" + numerator + " denominator:" + denominator;
+    }
 }
