@@ -1,6 +1,5 @@
 package fracCalc;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class FracCalc {
@@ -29,15 +28,33 @@ public class FracCalc {
     public static String produceAnswer(String input) { 
         // TODO: Implement this function to produce the solution to the input
         String[] array = input.split(" ");
-        parse3(array[0]);
-        return parse3(array[2]);
+        int[] first = toImproperFrac(parse3(array[0]));
+        String operator = array[1];
+        int[] second = toImproperFrac(parse3(array[2]));
+        if (operator.equals("+")) {
+        	int common = makeDenominatorsEqual(first[2], second[2]);
+        	first[1] *= common / first[2];
+        	second[1] *= common / second[2];
+        	return (first[0] * first[1]) + (second[0] * second[1]) + "/" + common;
+        } else if (operator.equals("-")) {
+        	int common = makeDenominatorsEqual(first[2], second[2]);
+        	first[1] *= common / first[2];
+        	second[1] *= common / second[2];
+        	return (first[0] * first[1]) - (second[0] * second[1]) + "/" + common;
+        } else if (operator.equals("*")) {
+        	return ((first[0] * second[0]) * (first[1] * second[1])) + "/" + (first[2] * second[2]);
+        } else if (operator.equals("/")) {
+           	return ((first[0] * second[0]) * (first[1] * second[2])) + "/" + (first[2] * second[1]);
+        }
+        return "";
     }
 
     // TODO: Fill in the space below with any helper methods that you think you will need
-    public static String parse3 (String operand) {
+    public static String[] parse3 (String operand) {
     	String whole;
     	String numerator;
     	String denominator;
+    	String sign;
     	if (operand.contains("_")) {
     		// if operand is a mixed fraction
     		String[] parsedOnce = operand.split("_");
@@ -57,6 +74,46 @@ public class FracCalc {
     		numerator = "0";
     		denominator = "1";
     	}
-    	return "whole:" + whole + " numerator:" + numerator + " denominator:" + denominator;
+    	if (whole.contains("-")) {
+    		sign = "-1";
+    		String[] withoutNegative = whole.split("-");
+    		whole = withoutNegative[1];
+    	} else {
+    		sign = "1";
+    	}
+    	String[] result = {sign, whole, numerator, denominator};
+    	return result;
+    }
+    public static int[] toImproperFrac (String[] input) {
+    	int[] result = new int[3];
+    	result[0] = Integer.parseInt(input[0]);
+    	result[1] = Integer.parseInt(input[1]) * Integer.parseInt(input[3]) + Integer.parseInt(input[2]);
+    	result[2] = Integer.parseInt(input[3]);
+    	return result;
+    }
+    public static int makeDenominatorsEqual (int x, int y) {
+    	if (x == y) {
+    		return x;
+    	} else {
+    		int large;
+    		int small;
+    		if (x < y) {
+    			large = y;
+    			small = x;
+    		} else {
+    			large = x;
+    			small = y;
+    		}
+    		int num1 = small;
+    		while (large % num1 != 0) {
+    			num1++;
+    		}
+    		int num2 = large * small;
+    		if (num1 <= num2) {
+    			return num2;
+    		} else {
+    			return num1;
+    		}
+    	}
     }
 }
